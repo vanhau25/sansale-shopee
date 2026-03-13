@@ -7,7 +7,12 @@
 
 <title>Tạo Link Shopee</title>
 
-<style>
+<style #preview{
+background:#fafafa;
+padding:15px;
+border-radius:10px;
+border:1px solid #eee;
+}>
 
 body{
 font-family:Arial;
@@ -177,7 +182,17 @@ border-radius:10px;
 <button class="copy" onclick="copy()">Copy Link</button>
 
 </div>
+<div id="preview" style="display:none;margin-top:20px;">
 
+<h3>Preview sản phẩm</h3>
+
+<img id="pimg" style="width:100%;border-radius:10px">
+
+<p id="ptitle" style="font-weight:bold;margin-top:10px"></p>
+
+<p id="pprice" style="color:#ee4d2d;font-size:18px"></p>
+
+</div>
 <div class="guide">
 
 <b>ℹ️ Hướng dẫn</b>
@@ -237,6 +252,11 @@ return;
 
 let product=extractProduct(link);
 
+// thêm preview sản phẩm
+let match=product.match(/product\/(\d+)\/(\d+)/);
+if(match){
+getProductInfo(match[1],match[2]);
+}
 let origin=encodeURIComponent(product);
 
 let aff="https://s.shopee.vn/an_redir?origin_link="+origin+"&affiliate_id="+affiliateID+"&sub_id=githubtool";
@@ -267,7 +287,34 @@ alert("Không thể dán tự động");
 
 }
 
-</script>
+</script async function getProductInfo(shopid,itemid){
+
+try{
+
+let url="https://shopee.vn/api/v4/item/get?itemid="+itemid+"&shopid="+shopid;
+
+let res=await fetch(url);
+
+let data=await res.json();
+
+let item=data.data.item;
+
+document.getElementById("pimg").src="https://cf.shopee.vn/file/"+item.image;
+
+document.getElementById("ptitle").innerText=item.name;
+
+document.getElementById("pprice").innerText="Giá: "+(item.price/100000)+"đ";
+
+document.getElementById("preview").style.display="block";
+
+}catch(e){
+
+console.log("Không lấy được thông tin sản phẩm");
+
+}
+
+} >
+
 
 </body>
 </html>
