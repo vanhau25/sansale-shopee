@@ -1,15 +1,16 @@
+```html
 <!DOCTYPE html>
 <html lang="vi">
-
 <head>
 <meta charset="UTF-8">
-<title>Tạo Link Shopee</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tạo Link Shopee Affiliate</title>
 
 <style>
 
 body{
-font-family: Arial;
-background: linear-gradient(180deg,#f4c2a8,#f6d7c9);
+font-family:Arial;
+background:#f5f5f5;
 margin:0;
 padding:40px;
 text-align:center;
@@ -18,38 +19,24 @@ text-align:center;
 .title{
 font-size:28px;
 font-weight:bold;
-color:#e24d2d;
-}
-
-.domain{
-background:#ffd6c7;
-display:inline-block;
-padding:6px 18px;
-border-radius:20px;
-margin-top:8px;
-font-size:14px;
+color:#ee4d2d;
+margin-bottom:20px;
 }
 
 .card{
 background:white;
-width:600px;
-max-width:95%;
-margin:30px auto;
+max-width:600px;
+margin:auto;
 padding:25px;
-border-radius:20px;
-box-shadow:0 10px 25px rgba(0,0,0,0.1);
+border-radius:12px;
+box-shadow:0 4px 15px rgba(0,0,0,0.1);
 text-align:left;
-}
-
-.label{
-font-weight:bold;
-margin-bottom:10px;
 }
 
 .input-box{
 display:flex;
 border:1px solid #ddd;
-border-radius:12px;
+border-radius:8px;
 overflow:hidden;
 }
 
@@ -67,68 +54,29 @@ padding:12px 15px;
 cursor:pointer;
 }
 
-.create-btn{
-background:#e75a3c;
+button{
+background:#ee4d2d;
 color:white;
-width:100%;
-padding:15px;
 border:none;
-border-radius:12px;
-font-size:16px;
+padding:12px;
+border-radius:8px;
+width:100%;
+font-size:15px;
 margin-top:15px;
 cursor:pointer;
-}
-
-.result{
-margin-top:15px;
 }
 
 .result input{
 width:100%;
 padding:10px;
-border-radius:8px;
-border:1px solid #ccc;
+border:1px solid #ddd;
+border-radius:6px;
+margin-top:10px;
 }
 
 .copy{
-margin-top:8px;
 background:#00b14f;
-color:white;
-border:none;
-padding:8px 15px;
-border-radius:8px;
-cursor:pointer;
-}
-
-.guide{
-background:#f7f7f7;
-padding:20px;
-border-radius:15px;
-margin-top:20px;
-}
-
-.fb-btn{
-background:#1877f2;
-color:white;
-padding:10px 18px;
-border:none;
-border-radius:8px;
 margin-top:10px;
-cursor:pointer;
-}
-
-.voucher-box{
-margin-top:25px;
-display:flex;
-justify-content:center;
-}
-
-.voucher-box img{
-width:100%;
-max-width:480px;
-height:auto;
-border-radius:14px;
-box-shadow:0 8px 20px rgba(0,0,0,0.15);
 }
 
 </style>
@@ -137,135 +85,84 @@ box-shadow:0 8px 20px rgba(0,0,0,0.15);
 
 <body>
 
-<div class="title">🔗 Tạo Link Shopee</div>
-<div class="domain">vanhau25.sansaleshopee</div>
-<div id="stats" style="margin-top:8px;font-size:14px;color:#444;">
-👥 Người đã sử dụng: 2512
-<br>
-🔥 Số Link đã tạo: 9328
-</div>
+<div class="title">🔗 Tạo Link Shopee Affiliate</div>
+
 <div class="card">
 
-<div class="label">📦 Link sản phẩm Shopee</div>
+<b>Dán link sản phẩm Shopee</b>
 
 <div class="input-box">
-<input id="link" placeholder="Dán link Shopee vào đây...">
+<input id="link" placeholder="Ví dụ: https://shopee.vn/product/...">
 <div class="paste" onclick="paste()">📋</div>
 </div>
 
-<button class="create-btn" onclick="convert()">✏️ Tạo Link Ngay</button>
+<button onclick="convert()">Tạo Link Affiliate</button>
 
 <div class="result">
-<input id="result" placeholder="Link affiliate sẽ hiện ở đây">
+
+<b>Link Affiliate</b>
+
+<input id="result">
+
 <button class="copy" onclick="copy()">Copy Link</button>
-</div>
 
-<div class="guide">
-
-<b>ℹ Hướng dẫn</b>
-
-<ol>
-<li>Sau khi tạo link, nhấn <b>Copy Link</b>.</li>
-<li>Dán link dưới bình luận bài đăng này.</li>
-<li>Click vào link để mở Shopee sẽ nhận được mã.</li>
-</ol>
-
-<a href="https://www.facebook.com/share/p/1J1ewcFGmJ/" target="_blank">
-<button class="fb-btn">Đến bài đăng Facebook</button>
-</a>
-
-</div>
-
-<div class="voucher-box">
-<img src="ma-giam-gia.png" alt="Mã giảm giá" onclick="openShopee()" style="cursor:pointer;">
 </div>
 
 </div>
 
 <script>
 
-let finalLink="";
+// affiliate id của bạn
+var affiliateID="17306040278";
 
-async function convert(){
+function convert(){
 
-let link = document.getElementById("link").value.trim();
+var link=document.getElementById("link").value.trim();
 
 if(link==""){
 alert("Hãy dán link Shopee");
 return;
 }
 
-let realLink = link;
+// encode link sản phẩm
+var origin=encodeURIComponent(link);
 
-try{
+// tạo link affiliate chuẩn
+var aff="https://s.shopee.vn/an_redir?origin_link="+origin+"&affiliate_id="+affiliateID+"&sub_id=toolgithub";
 
-// chuyển link rút gọn s.shopee.vn
-if(link.includes("s.shopee.vn")){
-
-let res = await fetch(link,{
-method:"HEAD",
-redirect:"follow"
-});
-
-realLink = res.url;
+document.getElementById("result").value=aff;
 
 }
 
-}catch(e){}
-
-// tạo URL object
-let url = new URL(realLink);
-
-// thêm affiliate
-url.searchParams.set("utm_medium","affiliates");
-url.searchParams.set("utm_source","an_17306040278");
-url.searchParams.set("utm_term","ek4vuwbbbk4w");
-
-finalLink = url.toString();
-
-document.getElementById("result").value = finalLink;
-
-}
-
-// copy link
 function copy(){
 
-let copyText = document.getElementById("result");
+var text=document.getElementById("result");
 
-if(copyText.value==""){
-alert("Chưa có link để copy");
-return;
-}
-
-copyText.select();
+text.select();
 document.execCommand("copy");
 
-alert("Đã copy link affiliate");
+alert("Đã copy link!");
 
 }
 
-// dán link
 async function paste(){
 
 try{
-const text = await navigator.clipboard.readText();
-document.getElementById("link").value = text;
-}catch(e){
-alert("Không thể dán tự động, hãy paste thủ công");
+
+const text=await navigator.clipboard.readText();
+document.getElementById("link").value=text;
+
+}catch{
+
+alert("Không thể dán tự động");
+
 }
 
 }
-function openShopee(){
 
-if(finalLink==""){
-alert("Hãy tạo link trước");
-return;
-}
-
-window.open(finalLink,"_blank");
-
-}
 </script>
 
 </body>
+
 </html>
+```
