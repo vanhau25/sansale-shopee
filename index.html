@@ -1,18 +1,13 @@
-
 <!DOCTYPE html>
 <html lang="vi">
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Tạo Link Shopee</title>
 
-<style #preview{
-background:#fafafa;
-padding:15px;
-border-radius:10px;
-border:1px solid #eee;
-}>
+<style>
 
 body{
 font-family:Arial;
@@ -136,7 +131,7 @@ max-width:100%;
 border-radius:8px;
 }
 
-</style .voucher-box{
+.voucher-box{
 max-width:720px;
 margin:30px auto;
 background:white;
@@ -148,7 +143,9 @@ box-shadow:0 10px 25px rgba(0,0,0,0.15);
 .voucher-box img{
 width:100%;
 border-radius:10px;
-}>
+}
+
+</style>
 
 </head>
 
@@ -168,6 +165,7 @@ border-radius:10px;
 
 <div class="input-box">
 <input id="link" placeholder="Dán link Shopee vào đây...">
+<input id="affiliate" value="17306040278" type="hidden">
 <div class="paste" onclick="paste()">📋</div>
 </div>
 
@@ -182,17 +180,7 @@ border-radius:10px;
 <button class="copy" onclick="copy()">Copy Link</button>
 
 </div>
-<div id="preview" style="display:none;margin-top:20px;">
 
-<h3>Preview sản phẩm</h3>
-
-<img id="pimg" style="width:100%;border-radius:10px">
-
-<p id="ptitle" style="font-weight:bold;margin-top:10px"></p>
-
-<p id="pprice" style="color:#ee4d2d;font-size:18px"></p>
-
-</div>
 <div class="guide">
 
 <b>ℹ️ Hướng dẫn</b>
@@ -207,9 +195,7 @@ href="https://www.facebook.com/share/p/1AxEg6ocwK/">
 </a>
 
 <div class="imagebox">
-
 <img src="voucher-facebook.png">
-
 </div>
 
 </div>
@@ -220,102 +206,76 @@ href="https://www.facebook.com/share/p/1AxEg6ocwK/">
 
 <script>
 
-var affiliateID="17306040278";
-
-// lấy id sản phẩm từ mọi loại link
-function extractProduct(link){
-
-let match=link.match(/product\/(\d+)\/(\d+)/);
-
-if(match){
-return "https://shopee.vn/product/"+match[1]+"/"+match[2];
+function paste(){
+navigator.clipboard.readText().then(text=>{
+document.getElementById("link").value=text;
+});
 }
 
-match=link.match(/i\.(\d+)\.(\d+)/);
+function copy(){
 
-if(match){
-return "https://shopee.vn/product/"+match[1]+"/"+match[2];
+let text=document.getElementById("result").value;
+
+if(text===""){
+alert("Chưa có link để copy");
+return;
 }
 
-return link;
-
+navigator.clipboard.writeText(text);
+alert("Đã copy link!");
 }
 
 function convert(){
 
 let link=document.getElementById("link").value.trim();
+let affiliate="17306040278";
 
-if(!link){
-alert("Hãy dán link Shopee");
+if(link===""){
+alert("Vui lòng dán link Shopee");
 return;
 }
 
-let product=extractProduct(link);
+let finalLink="";
 
-// thêm preview sản phẩm
-let match=product.match(/product\/(\d+)\/(\d+)/);
-if(match){
-getProductInfo(match[1],match[2]);
-}
-let origin=encodeURIComponent(product);
-
-let aff="https://s.shopee.vn/an_redir?origin_link="+origin+"&affiliate_id="+affiliateID+"&sub_id=githubtool";
-
-document.getElementById("result").value=aff;
-
+// Nếu đã là link rút gọn Shopee
+if(link.includes("s.shopee.vn")){
+finalLink = link;
 }
 
-function copy(){
+// Nếu là link product
+else{
 
-let text=document.getElementById("result");
+let shopid="";
+let itemid="";
 
-text.select();
-document.execCommand("copy");
+let match1 = link.match(/product\/(\d+)\/(\d+)/);
 
-alert("Đã copy link!");
+let match2 = link.match(/-i\.(\d+)\.(\d+)/);
 
+if(match1){
+shopid = match1[1];
+itemid = match1[2];
 }
 
-async function paste(){
-
-try{
-const text=await navigator.clipboard.readText();
-document.getElementById("link").value=text;
-}catch{
-alert("Không thể dán tự động");
+if(match2){
+shopid = match2[1];
+itemid = match2[2];
 }
 
+if(shopid==="" || itemid===""){
+alert("Không nhận diện được link Shopee");
+return;
 }
 
-</script async function getProductInfo(shopid,itemid){
-
-try{
-
-let url="https://shopee.vn/api/v4/item/get?itemid="+itemid+"&shopid="+shopid;
-
-let res=await fetch(url);
-
-let data=await res.json();
-
-let item=data.data.item;
-
-document.getElementById("pimg").src="https://cf.shopee.vn/file/"+item.image;
-
-document.getElementById("ptitle").innerText=item.name;
-
-document.getElementById("pprice").innerText="Giá: "+(item.price/100000)+"đ";
-
-document.getElementById("preview").style.display="block";
-
-}catch(e){
-
-console.log("Không lấy được thông tin sản phẩm");
+finalLink = `https://s.shopee.vn/an_redir?origin_link=https://shopee.vn/product/${shopid}/${itemid}&affiliate_id=${affiliate}&sub_id=githubtool`;
 
 }
 
-} >
+document.getElementById("result").value = finalLink;
 
+}
+
+</script>
 
 </body>
 </html>
-```
