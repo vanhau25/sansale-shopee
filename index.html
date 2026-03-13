@@ -1,43 +1,65 @@
-```html
+
 <!DOCTYPE html>
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Shopee Affiliate Tool</title>
+<title>Tạo Link Shopee</title>
 
 <style>
 
 body{
 font-family:Arial;
-background:#f6f6f6;
-padding:40px;
-text-align:center;
+background:#e9b9a5;
+margin:0;
+padding:40px 10px;
+}
+
+.container{
+max-width:720px;
+margin:auto;
 }
 
 .title{
-font-size:28px;
-color:#ee4d2d;
+text-align:center;
+font-size:30px;
+color:#e64a2e;
 font-weight:bold;
-margin-bottom:20px;
+}
+
+.sub{
+text-align:center;
+background:#f3c8b5;
+display:inline-block;
+padding:6px 18px;
+border-radius:20px;
+margin:10px auto 25px;
+color:#a24e3f;
+}
+
+.center{
+text-align:center;
 }
 
 .card{
-background:white;
-max-width:650px;
-margin:auto;
+background:#f4f4f4;
 padding:25px;
-border-radius:12px;
-box-shadow:0 5px 20px rgba(0,0,0,0.1);
-text-align:left;
+border-radius:18px;
+box-shadow:0 10px 25px rgba(0,0,0,0.15);
+}
+
+.label{
+font-weight:bold;
+margin-bottom:8px;
 }
 
 .input-box{
 display:flex;
-border:1px solid #ddd;
-border-radius:8px;
+border:1px solid #ccc;
+border-radius:10px;
 overflow:hidden;
+background:white;
 }
 
 .input-box input{
@@ -54,56 +76,128 @@ cursor:pointer;
 }
 
 button{
-background:#ee4d2d;
+background:#e45c3c;
 color:white;
 border:none;
-padding:12px;
+padding:14px;
 width:100%;
 margin-top:15px;
-border-radius:8px;
+border-radius:10px;
 cursor:pointer;
-font-size:15px;
+font-size:16px;
 }
 
 .result input{
 width:100%;
 padding:10px;
-border:1px solid #ddd;
-border-radius:6px;
+border:1px solid #ccc;
+border-radius:8px;
 margin-top:10px;
 }
 
 .copy{
-background:#00b14f;
+background:#00a94f;
 margin-top:10px;
 }
 
-</style>
+.guide{
+background:#eaeaea;
+padding:20px;
+border-radius:12px;
+margin-top:20px;
+}
+
+.fbbtn{
+display:inline-block;
+margin-top:10px;
+padding:8px 14px;
+border:1px solid #1877f2;
+border-radius:6px;
+color:#1877f2;
+text-decoration:none;
+background:white;
+}
+
+.imagebox{
+margin-top:15px;
+background:#f0f0f0;
+padding:10px;
+border-radius:10px;
+text-align:center;
+}
+
+.imagebox img{
+max-width:100%;
+border-radius:8px;
+}
+
+</style .voucher-box{
+max-width:720px;
+margin:30px auto;
+background:white;
+padding:12px;
+border-radius:14px;
+box-shadow:0 10px 25px rgba(0,0,0,0.15);
+}
+
+.voucher-box img{
+width:100%;
+border-radius:10px;
+}>
 
 </head>
 
 <body>
 
-<div class="title">Shopee Affiliate Generator</div>
+<div class="container">
+
+<div class="title">🔗 Tạo Link Shopee</div>
+
+<div class="center">
+<span class="sub">vanhau.sansaleshopee</span>
+</div>
 
 <div class="card">
 
-<b>Dán link Shopee</b>
+<div class="label">📦 Link sản phẩm Shopee</div>
 
 <div class="input-box">
-<input id="link" placeholder="Dán link Shopee vào đây">
+<input id="link" placeholder="Dán link Shopee vào đây...">
 <div class="paste" onclick="paste()">📋</div>
 </div>
 
-<button onclick="convert()">Tạo Link Affiliate</button>
+<button onclick="convert()">✏️ Tạo Link Ngay</button>
 
 <div class="result">
 
-<b>Link Affiliate</b>
+<b>Link affiliate sẽ hiện ở đây</b>
 
 <input id="result">
 
 <button class="copy" onclick="copy()">Copy Link</button>
+
+</div>
+
+<div class="guide">
+
+<b>ℹ️ Hướng dẫn</b>
+
+<p>1. Sau khi tạo link, nhấn <b>Copy Link</b>.</p>
+<p>2. Dán link dưới bình luận bài đăng phía dưới.</p>
+<p>3. Click vào link bình luận để mở Shopee sẽ nhận được mã.</p>
+
+<a class="fbbtn" target="_blank"
+href="https://www.facebook.com/share/p/1AxEg6ocwK/">
+📘 Đến bài đăng Facebook
+</a>
+
+<div class="imagebox">
+
+<img src="voucher-facebook.png">
+
+</div>
+
+</div>
 
 </div>
 
@@ -122,7 +216,6 @@ if(match){
 return "https://shopee.vn/product/"+match[1]+"/"+match[2];
 }
 
-// link dạng i.shopid.productid
 match=link.match(/i\.(\d+)\.(\d+)/);
 
 if(match){
@@ -142,16 +235,12 @@ alert("Hãy dán link Shopee");
 return;
 }
 
-// lấy link product chuẩn
 let product=extractProduct(link);
 
-// encode
 let origin=encodeURIComponent(product);
 
-// tạo affiliate link
 let aff="https://s.shopee.vn/an_redir?origin_link="+origin+"&affiliate_id="+affiliateID+"&sub_id=githubtool";
 
-// hiển thị
 document.getElementById("result").value=aff;
 
 }
