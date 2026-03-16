@@ -225,6 +225,39 @@ navigator.clipboard.writeText(text);
 alert("Đã copy link!");
 }
 
+function extractProduct(link){
+
+let shopid="";
+let itemid="";
+
+// dạng shopee.vn/product
+let m1 = link.match(/product\/(\d+)\/(\d+)/);
+
+// dạng -i.shopid.itemid
+let m2 = link.match(/-i\.(\d+)\.(\d+)/);
+
+// dạng i.shopid.itemid
+let m3 = link.match(/i\.(\d+)\.(\d+)/);
+
+if(m1){
+shopid = m1[1];
+itemid = m1[2];
+}
+
+if(m2){
+shopid = m2[1];
+itemid = m2[2];
+}
+
+if(m3){
+shopid = m3[1];
+itemid = m3[2];
+}
+
+return {shopid,itemid};
+
+}
+
 function convert(){
 
 let link=document.getElementById("link").value.trim();
@@ -235,41 +268,28 @@ alert("Vui lòng dán link Shopee");
 return;
 }
 
-let finalLink="";
+// nếu là link rút gọn
+if(
+link.includes("s.shopee.vn") ||
+link.includes("shope.ee") ||
+link.includes("vn.shp.ee")
+){
 
-// Nếu đã là link rút gọn Shopee
-if(link.includes("s.shopee.vn")){
-finalLink = link;
+alert("Link rút gọn Shopee. Hãy mở link rồi copy link sản phẩm đầy đủ để convert affiliate.");
+window.open(link,"_blank");
+return;
+
 }
 
-// Nếu là link product
-else{
+let data = extractProduct(link);
 
-let shopid="";
-let itemid="";
-
-let match1 = link.match(/product\/(\d+)\/(\d+)/);
-
-let match2 = link.match(/-i\.(\d+)\.(\d+)/);
-
-if(match1){
-shopid = match1[1];
-itemid = match1[2];
-}
-
-if(match2){
-shopid = match2[1];
-itemid = match2[2];
-}
-
-if(shopid==="" || itemid===""){
+if(data.shopid==="" || data.itemid===""){
 alert("Không nhận diện được link Shopee");
 return;
 }
 
-finalLink = `https://s.shopee.vn/an_redir?origin_link=https://shopee.vn/product/${shopid}/${itemid}&affiliate_id=${affiliate}&sub_id=githubtool`;
-
-}
+let finalLink =
+`https://s.shopee.vn/an_redir?origin_link=https://shopee.vn/product/${data.shopid}/${data.itemid}&affiliate_id=${affiliate}&sub_id=githubtool`;
 
 document.getElementById("result").value = finalLink;
 
