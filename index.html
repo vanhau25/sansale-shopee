@@ -8,7 +8,24 @@
 <title>Tạo Link Shopee</title>
 
 <style>
+.voucher-box{
+max-width:720px;
+margin-top:20px;
+overflow:hidden;
+border-radius:14px;
+}
 
+.voucher-box img{
+width:100%;
+display:block;
+border-radius:14px;
+}
+.voucher-box img{
+width:100%;
+display:block;
+border-radius:14px;
+box-shadow:0 6px 18px rgba(0,0,0,0.2);
+}
 body{
 font-family:Arial;
 background:#e9b9a5;
@@ -107,44 +124,6 @@ border-radius:12px;
 margin-top:20px;
 }
 
-.fbbtn{
-display:inline-block;
-margin-top:10px;
-padding:8px 14px;
-border:1px solid #1877f2;
-border-radius:6px;
-color:#1877f2;
-text-decoration:none;
-background:white;
-}
-
-.imagebox{
-margin-top:15px;
-background:#f0f0f0;
-padding:10px;
-border-radius:10px;
-text-align:center;
-}
-
-.imagebox img{
-max-width:100%;
-border-radius:8px;
-}
-
-.voucher-box{
-max-width:720px;
-margin:30px auto;
-background:white;
-padding:12px;
-border-radius:14px;
-box-shadow:0 10px 25px rgba(0,0,0,0.15);
-}
-
-.voucher-box img{
-width:100%;
-border-radius:10px;
-}
-
 </style>
 
 </head>
@@ -185,35 +164,45 @@ border-radius:10px;
 
 <b>ℹ️ Hướng dẫn</b>
 
-<p>1. Sau khi tạo link, nhấn <b>Copy Link</b>.</p>
-<p>2. Dán link dưới bình luận bài đăng phía dưới.</p>
+<p>1. Sau khi tạo link nhấn <b>Copy Link</b></p>
+<p>2. Dán link dưới bình luận bài đăng này.</p>
 <p>3. Click vào link bình luận để mở Shopee sẽ nhận được mã.</p>
 
-<a class="fbbtn" target="_blank"
-href="https://www.facebook.com/share/p/1AxEg6ocwK/">
-📘 Đến bài đăng Facebook
+<a href="https://www.facebook.com/share/p/16oeaMMeTy/" target="_blank">
+<button style="
+background:#1877f2;
+margin-top:10px;
+display:flex;
+align-items:center;
+justify-content:center;
+gap:8px;
+">
+
+<span style="font-size:18px;">📘</span>
+Đến bài đăng Facebook
+
+</button>
 </a>
 
-<div class="imagebox">
+</div>
+<div class="voucher-box">
 <img src="voucher-facebook.png">
 </div>
-
 </div>
 
-</div>
-
-</div>
 
 <script>
 
-function paste(){
-navigator.clipboard.readText().then(text=>{
-document.getElementById("link").value=text;
-});
+async function paste(){
+try{
+const text = await navigator.clipboard.readText();
+document.getElementById("link").value = text;
+}catch{
+alert("Không thể dán tự động");
+}
 }
 
 function copy(){
-
 let text=document.getElementById("result").value;
 
 if(text===""){
@@ -225,77 +214,113 @@ navigator.clipboard.writeText(text);
 alert("Đã copy link!");
 }
 
-function extractProduct(link){
 
-let shopid="";
-let itemid="";
+// mở link rút gọn
+async function expandLink(url){
 
-// dạng shopee.vn/product
-let m1 = link.match(/product\/(\d+)\/(\d+)/);
+try{
 
-// dạng -i.shopid.itemid
-let m2 = link.match(/-i\.(\d+)\.(\d+)/);
+let res = await fetch(
+"https://ganlinkshopee.hauvan174.workers.dev/?url=" + encodeURIComponent(url)
+);
+
+let data = await res.json();
+
+if(data.final_url){
+return data.final_url;
+}
+
+return url;
+
+}catch{
+
+return url;
+
+}
+
+}
+
+
+// lấy shopid itemid
+function getProductInfo(link){
+
+// bỏ query phía sau
+link = link.split("?")[0];
+
+// chuẩn hóa link
+link = decodeURIComponent(link);
+
+// tìm shopid itemid trong toàn bộ link
+let match = link.match(/(\d{6,})\/(\d{6,})/);
+
+if(match){
+return {
+shopid: match[1],
+itemid: match[2]
+};
+}
 
 // dạng i.shopid.itemid
-let m3 = link.match(/i\.(\d+)\.(\d+)/);
+match = link.match(/i\.(\d+)\.(\d+)/);
 
-if(m1){
-shopid = m1[1];
-itemid = m1[2];
+if(match){
+return {
+shopid: match[1],
+itemid: match[2]
+};
 }
 
-if(m2){
-shopid = m2[1];
-itemid = m2[2];
-}
-
-if(m3){
-shopid = m3[1];
-itemid = m3[2];
-}
-
-return {shopid,itemid};
+return null;
 
 }
 
-function convert(){
+
+async function convert(){
 
 let link=document.getElementById("link").value.trim();
-let affiliate="17306040278";
+let affiliate=document.getElementById("affiliate").value;
 
 if(link===""){
 alert("Vui lòng dán link Shopee");
 return;
 }
 
+
 // nếu là link rút gọn
 if(
 link.includes("s.shopee.vn") ||
-link.includes("shope.ee") ||
-link.includes("vn.shp.ee")
+link.includes("vn.shp.ee") ||
+link.includes("shope.ee")
 ){
 
-alert("Link rút gọn Shopee. Hãy mở link rồi copy link sản phẩm đầy đủ để convert affiliate.");
-window.open(link,"_blank");
-return;
+link = await expandLink(link);
 
 }
 
-let data = extractProduct(link);
 
-if(data.shopid==="" || data.itemid===""){
+// lấy id
+let data = getProductInfo(link);
+
+if(!data){
+
 alert("Không nhận diện được link Shopee");
+
 return;
+
 }
 
+
+// tạo link affiliate
 let finalLink =
-`https://s.shopee.vn/an_redir?origin_link=https://shopee.vn/product/${data.shopid}/${data.itemid}&affiliate_id=${affiliate}&sub_id=githubtool`;
+`https://s.shopee.vn/an_redir?origin_link=https://shopee.vn/product/${data.shopid}/${data.itemid}&affiliate_id=${affiliate}&sub_id=githubtool&deep_and_deferred=1`;
 
 document.getElementById("result").value = finalLink;
 
 }
 
 </script>
+
+</div>
 
 </body>
 </html>
